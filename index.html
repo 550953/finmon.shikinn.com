@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Монька — Финансовый помощник</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     ЭКРАН 1: ГЛАВНАЯ / КОПИЛКА
+══════════════════════════════════════════════ -->
+<section id="screen-home" class="screen active">
+
+  <!-- Верхняя шапка с персонажем -->
+  <div class="home-header">
+    <div class="greeting-block">
+      <p class="greeting-sub">Привет,</p>
+      <p class="greeting-name" id="child-name">Алёша! 👋</p>
+    </div>
+    <div class="mascot-wrap">
+      <!-- Совёнок Монька -->
+      <div class="mascot" id="mascot-home">
+        <div class="owl-body">
+          <div class="owl-head">
+            <div class="owl-eye left"><div class="pupil"></div></div>
+            <div class="owl-eye right"><div class="pupil"></div></div>
+            <div class="owl-beak"></div>
+            <div class="owl-ear left"></div>
+            <div class="owl-ear right"></div>
+          </div>
+          <div class="owl-belly"></div>
+          <div class="owl-wing left-wing"></div>
+          <div class="owl-wing right-wing"></div>
+        </div>
+        <div class="mascot-speech" id="mascot-speech">Копи мудро! 🦉</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Карточка баланса -->
+  <div class="balance-card">
+    <div class="balance-coins-bg">
+      <span class="bg-coin c1">🪙</span>
+      <span class="bg-coin c2">⭐</span>
+      <span class="bg-coin c3">🪙</span>
+      <span class="bg-coin c4">✨</span>
+    </div>
+    <p class="balance-label">Моя копилка</p>
+    <p class="balance-amount"><span id="balance-display">0</span> <span class="coin-ico">🪙</span></p>
+    <div class="level-bar-wrap">
+      <span class="level-tag">Уровень <span id="current-level">1</span></span>
+      <div class="level-bar"><div class="level-fill" id="level-fill"></div></div>
+      <span class="level-next" id="level-next-txt">до ур. 2</span>
+    </div>
+  </div>
+
+  <!-- Быстрые кнопки -->
+  <div class="quick-btns">
+    <button class="qbtn income-btn" onclick="switchScreen('income')">
+      <span class="qbtn-ico">💚</span>
+      <span>Что пришло</span>
+    </button>
+    <button class="qbtn expense-btn" onclick="switchScreen('expense')">
+      <span class="qbtn-ico">🔴</span>
+      <span>Что ушло</span>
+    </button>
+    <button class="qbtn goals-btn" onclick="switchScreen('goals')">
+      <span class="qbtn-ico">🌟</span>
+      <span>Цели</span>
+    </button>
+  </div>
+
+  <!-- Последние операции -->
+  <div class="section-title">Последние события</div>
+  <div class="transactions-mini" id="home-transactions">
+    <div class="empty-state">Пока тихо... Добавь первую монетку! 🪙</div>
+  </div>
+
+  <!-- Ачивки строка -->
+  <div class="section-title">Мои ачивки</div>
+  <div class="achivs-row" id="achivs-row"></div>
+
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     ЭКРАН 2: ДОХОДЫ И РАСХОДЫ
+══════════════════════════════════════════════ -->
+<section id="screen-money" class="screen">
+
+  <div class="screen-header">
+    <h2>💰 Что пришло / Что ушло</h2>
+  </div>
+
+  <!-- Тоггл Доходы / Расходы -->
+  <div class="toggle-row">
+    <button class="toggle-btn active" id="tab-income" onclick="setMoneyTab('income')">
+      💚 Что пришло
+    </button>
+    <button class="toggle-btn" id="tab-expense" onclick="setMoneyTab('expense')">
+      🔴 Что ушло
+    </button>
+  </div>
+
+  <!-- Форма добавления -->
+  <div class="add-form-card" id="money-form">
+    <div class="form-row">
+      <label>Монетки</label>
+      <div class="coin-input-wrap">
+        <input type="number" id="money-amount" placeholder="0" min="1" max="9999" />
+        <span class="coin-suffix">🪙</span>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Категория</label>
+      <div class="category-chips" id="category-chips"></div>
+    </div>
+    <div class="form-row">
+      <label>Заметка (необяз.)</label>
+      <input type="text" id="money-note" placeholder="Например: от папы" class="text-input" maxlength="40" />
+    </div>
+    <button class="big-btn" id="add-money-btn" onclick="addTransaction()">
+      <span id="add-money-label">+ Добавить доход</span>
+    </button>
+  </div>
+
+  <!-- Список транзакций -->
+  <div class="section-title">История</div>
+  <div class="transactions-list" id="transactions-list"></div>
+
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     ЭКРАН 3: ЦЕЛИ
+══════════════════════════════════════════════ -->
+<section id="screen-goals" class="screen">
+
+  <div class="screen-header">
+    <h2>🌟 Мои сокровища</h2>
+  </div>
+
+  <!-- Форма новой цели -->
+  <div class="add-form-card">
+    <div class="form-row">
+      <label>Мечта</label>
+      <input type="text" id="goal-name" placeholder="Велосипед, планшет..." class="text-input" maxlength="30" />
+    </div>
+    <div class="form-row">
+      <label>Нужно монеток</label>
+      <div class="coin-input-wrap">
+        <input type="number" id="goal-target" placeholder="100" min="1" max="99999" />
+        <span class="coin-suffix">🪙</span>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Иконка цели</label>
+      <div class="emoji-picker" id="goal-emoji-picker"></div>
+    </div>
+    <button class="big-btn goals-color" onclick="addGoal()">✨ Поставить цель!</button>
+  </div>
+
+  <!-- Список целей -->
+  <div class="goals-list" id="goals-list">
+    <div class="empty-state">У тебя пока нет целей. Поставь первую! 🌈</div>
+  </div>
+
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     ЭКРАН 4: УРОКИ И ЗАДАНИЯ
+══════════════════════════════════════════════ -->
+<section id="screen-lessons" class="screen">
+
+  <div class="screen-header">
+    <h2>📚 Уроки и Задания</h2>
+  </div>
+
+  <!-- Ежедневные задания -->
+  <div class="section-title">⚡ Сегодняшние задания</div>
+  <div class="daily-tasks" id="daily-tasks"></div>
+
+  <!-- Уроки -->
+  <div class="section-title">📖 Уроки финансов</div>
+  <div class="lessons-list" id="lessons-list"></div>
+
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     ЭКРАН 5: АНАЛИТИКА
+══════════════════════════════════════════════ -->
+<section id="screen-stats" class="screen">
+
+  <div class="screen-header">
+    <h2>📊 Мои итоги</h2>
+  </div>
+
+  <!-- Сводка за неделю -->
+  <div class="stats-summary">
+    <div class="stat-box income-box">
+      <span class="stat-ico">💚</span>
+      <span class="stat-val" id="week-income">0</span>
+      <span class="stat-lbl">пришло</span>
+    </div>
+    <div class="stat-box expense-box">
+      <span class="stat-ico">🔴</span>
+      <span class="stat-val" id="week-expense">0</span>
+      <span class="stat-lbl">ушло</span>
+    </div>
+    <div class="stat-box balance-box">
+      <span class="stat-ico">🪙</span>
+      <span class="stat-val" id="week-balance">0</span>
+      <span class="stat-lbl">осталось</span>
+    </div>
+  </div>
+
+  <!-- Пончиковая диаграмма (canvas) -->
+  <div class="section-title">На что ушли монетки 🍩</div>
+  <div class="donut-wrap">
+    <canvas id="donut-chart" width="220" height="220"></canvas>
+    <div class="donut-legend" id="donut-legend"></div>
+  </div>
+
+  <!-- Столбики по дням -->
+  <div class="section-title">Доходы и расходы по дням 📅</div>
+  <div class="bar-chart-wrap">
+    <canvas id="bar-chart" width="340" height="160"></canvas>
+  </div>
+
+  <!-- Фан-факт от Моньки -->
+  <div class="mascot-tip" id="stats-tip">
+    <div class="tip-owl">🦉</div>
+    <div class="tip-text" id="tip-text">Загружаю советы...</div>
+  </div>
+
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     НИЖНЕЕ МЕНЮ (ТАБ-БАР)
+══════════════════════════════════════════════ -->
+<nav class="tabbar">
+  <button class="tab active" data-screen="home" onclick="switchScreen('home')">
+    <span class="tab-ico">🏠</span>
+    <span class="tab-lbl">Главная</span>
+  </button>
+  <button class="tab" data-screen="money" onclick="switchScreen('money')">
+    <span class="tab-ico">💰</span>
+    <span class="tab-lbl">Деньги</span>
+  </button>
+  <button class="tab" data-screen="goals" onclick="switchScreen('goals')">
+    <span class="tab-ico">🌟</span>
+    <span class="tab-lbl">Цели</span>
+  </button>
+  <button class="tab" data-screen="lessons" onclick="switchScreen('lessons')">
+    <span class="tab-ico">📚</span>
+    <span class="tab-lbl">Уроки</span>
+  </button>
+  <button class="tab" data-screen="stats" onclick="switchScreen('stats')">
+    <span class="tab-ico">📊</span>
+    <span class="tab-lbl">Итоги</span>
+  </button>
+</nav>
+
+
+<!-- ══════════════════════════════════════════════
+     МОДАЛКА УРОКА
+══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="lesson-modal" onclick="closeLessonModal(event)">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeLessonModal()">✕</button>
+    <div class="modal-emoji" id="modal-emoji">📖</div>
+    <h3 class="modal-title" id="modal-title">Урок</h3>
+    <div class="modal-body" id="modal-body"></div>
+    <button class="big-btn" id="modal-complete-btn" onclick="completeLesson()">
+      ✅ Получить награду!
+    </button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     ВСПЛЫВАЮЩАЯ НАГРАДА
+══════════════════════════════════════════════ -->
+<div class="reward-popup" id="reward-popup">
+  <div class="reward-inner">
+    <div class="reward-coins" id="reward-coins"></div>
+    <div class="reward-text" id="reward-text">+5 🪙</div>
+  </div>
+</div>
+
+
+<script src="app.js"></script>
+</body>
+</html>
